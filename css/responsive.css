@@ -1,1 +1,112 @@
-@media(max-width:1024px){.nav-links{gap:13px}.category-grid{grid-template-columns:repeat(3,1fr)}.property-grid{grid-template-columns:repeat(2,1fr)}.search-grid{grid-template-columns:1fr 1fr}.filter-row{grid-template-columns:1fr 1fr}.filter-row label:last-child{grid-column:span 2}.detail-main{grid-template-columns:1fr}.footer-grid{grid-template-columns:2fr 1fr 1fr}.split-banner{padding:40px}.two-col{gap:30px}}@media(max-width:768px){.container{width:min(100% - 28px,600px)}.header{height:68px}.nav-links,.nav-actions .desktop{display:none}.menu-btn{display:block}.nav{position:relative}.nav-links{position:absolute;left:0;right:0;top:58px;background:#fff;border:1px solid var(--border);border-radius:12px;padding:12px;flex-direction:column;align-items:stretch;box-shadow:0 15px 30px #0002}.nav-links.open{display:flex}.nav-links a{padding:10px}.hero{min-height:720px}.hero-content{padding:50px 0}.hero h1{font-size:58px}.search-grid{grid-template-columns:1fr}.category-grid,.property-grid,.blog-grid,.values-grid{grid-template-columns:1fr}.section{padding:60px 0}.section-head{align-items:start;gap:12px;flex-direction:column}.section h2{font-size:30px}.split-banner{grid-template-columns:1fr;padding:32px}.split-banner h2{font-size:32px}.banner-stat{border-left:0;border-top:1px solid #ffffff33;padding:25px 0 0;margin-top:25px}.page-hero{padding:50px 0}.page-hero h1{font-size:40px}.filter-row{grid-template-columns:1fr}.filter-row label:last-child{grid-column:auto}.detail-gallery{height:330px;grid-template-columns:1fr}.detail-gallery img:nth-child(n+2){display:none}.detail-main h1{font-size:34px}.spec-grid{grid-template-columns:1fr 1fr}.form-grid,.two-col{grid-template-columns:1fr}.footer-grid{grid-template-columns:1fr 1fr}.dashboard-layout{grid-template-columns:1fr}.dashboard-head{align-items:start;gap:15px;flex-direction:column}.stats-grid{grid-template-columns:1fr 1fr}}@media(max-width:430px){.container{width:calc(100% - 22px)}.hero h1{font-size:50px;letter-spacing:-2px}.search-tabs{overflow:auto}.tab{padding:12px 13px;white-space:nowrap}.property-image{height:210px}.footer-grid{grid-template-columns:1fr}.auth-card,.form-card{padding:25px}.detail-actions{flex-direction:column}}
+/* ==========================================================================
+   responsive.css
+   Breakpoints testés : 320 / 375 / 390 / 430 / 768 / 1024 / 1280 / 1440
+   Stratégie : le mobile n'est pas une réduction du desktop — le menu,
+   la recherche, les grilles et le dashboard ont une mise en page dédiée.
+   ========================================================================== */
+
+/* ---------- Tablette (≤1024px) ---------- */
+@media (max-width: 1024px) {
+  .properties-grid { grid-template-columns: repeat(2, 1fr); }
+  .categories-grid { grid-template-columns: repeat(3, 1fr); }
+  .stats-grid, .values-grid { grid-template-columns: repeat(2, 1fr); }
+  .blog-grid { grid-template-columns: repeat(2, 1fr); }
+  .listing-layout { grid-template-columns: 220px 1fr; }
+  .detail-layout { grid-template-columns: 1fr; }
+  .contact-card { position: static; }
+  .search-form { grid-template-columns: repeat(2, 1fr); }
+  .search-form__more { grid-template-columns: repeat(2, 1fr); }
+  .dashboard-layout { grid-template-columns: 220px 1fr; }
+}
+
+/* ---------- Mobile large / tablette portrait (≤768px) ---------- */
+@media (max-width: 768px) {
+  .section { padding: 48px 0; }
+  .container { padding: 0 18px; }
+
+  /* Header mobile : menu plein écran */
+  .header__inner { height: 68px; }
+  .hamburger { display: flex; }
+  .header__publish { display: none; }
+  .main-nav {
+    position: fixed;
+    top: 68px; left: 0; right: 0; bottom: 0;
+    background: var(--white);
+    transform: translateX(100%);
+    transition: transform 0.25s ease;
+    padding: 24px;
+    overflow-y: auto;
+  }
+  .main-nav.is-open { transform: translateX(0); }
+  .main-nav ul { flex-direction: column; gap: 4px; }
+  .main-nav a { display: block; padding: 14px 8px; font-size: 1.05rem; border-bottom: 1px solid var(--gray-100); }
+  .main-nav::after {
+    content: "Publier une annonce";
+    display: block;
+    margin-top: 20px;
+    text-align: center;
+    background: var(--gold);
+    color: var(--navy-dark);
+    padding: 14px;
+    border-radius: var(--radius-s);
+    font-weight: 600;
+  }
+
+  /* Hero */
+  .hero { padding: 90px 0 200px; min-height: auto; }
+  .hero__actions { flex-direction: column; align-items: stretch; }
+
+  /* Recherche : une colonne, boutons pleine largeur */
+  .search-panel { margin-top: -170px; }
+  .search-card { padding: 6px 16px 20px; }
+  .search-tabs { overflow-x: auto; }
+  .search-form, .search-form__more { grid-template-columns: 1fr; }
+  .search-form button[type="submit"] { width: 100%; }
+
+  .categories-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+  .category-card { padding: 20px 10px; }
+
+  .properties-grid, .properties-grid--2, .blog-grid { grid-template-columns: 1fr; gap: 20px; }
+  .stats-grid, .values-grid { grid-template-columns: 1fr; }
+
+  .section__head { flex-direction: column; align-items: flex-start; }
+
+  /* Listing + filtres empilés */
+  .listing-layout { grid-template-columns: 1fr; }
+  .filters-sidebar { position: static; }
+
+  /* Formulaires en une colonne */
+  .form-grid { grid-template-columns: 1fr; }
+  .form-card { padding: 24px; }
+
+  /* Dashboard empilé, table scrollable horizontalement */
+  .dashboard-layout { grid-template-columns: 1fr; }
+  .dashboard-sidebar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 16px 18px; }
+  .dashboard-sidebar__user { border: none; padding: 0; margin: 0; width: 100%; }
+  .dashboard-nav { display: flex; flex-wrap: wrap; gap: 8px; width: 100%; }
+  .dashboard-nav a, .dashboard-nav button { padding: 8px 12px; font-size: 0.82rem; margin: 0; }
+  .dashboard-main { padding: 20px 16px; }
+  .stats-row { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .dashboard-panel { overflow-x: auto; }
+  .listings-table { min-width: 640px; }
+
+  .detail-meta { flex-wrap: wrap; gap: 16px; row-gap: 16px; justify-content: space-between; }
+}
+
+/* ---------- Petits mobiles (≤430px) ---------- */
+@media (max-width: 430px) {
+  .hero h1 { font-size: 2rem; }
+  .hero p { font-size: 1rem; }
+  .categories-grid { grid-template-columns: 1fr 1fr; }
+  .stats-row { grid-template-columns: 1fr 1fr; }
+  .footer__grid { grid-template-columns: 1fr; gap: 28px; }
+  .form-card { padding: 18px; }
+  .gallery-thumbs img { width: 70px; height: 54px; }
+}
+
+/* ---------- Très petits mobiles (≤375px / 320px) ---------- */
+@media (max-width: 375px) {
+  .logo__main { font-size: 1.3rem; }
+  .btn { padding: 12px 20px; font-size: 0.9rem; }
+  .search-panel { margin-top: -150px; }
+}
