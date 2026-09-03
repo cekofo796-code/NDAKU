@@ -1,3 +1,104 @@
-function formatPrice(p,t){return t==='rent'?new Intl.NumberFormat('fr-FR').format(p)+' $/mois':new Intl.NumberFormat('fr-FR').format(p)+' $'}function isFavorite(id){return JSON.parse(localStorage.getItem('ndaku_favorites')||'[]').includes(id)}function toggleFavorite(id){let f=JSON.parse(localStorage.getItem('ndaku_favorites')||'[]');f=f.includes(id)?f.filter(x=>x!==id):[...f,id];localStorage.setItem('ndaku_favorites',JSON.stringify(f));renderCurrent();toast(f.includes(id)?'Ajouté aux favoris':'Retiré des favoris')}function escapeHtml(s){return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}function card(p){return `<article class="property-card"><div class="property-image" style="background-image:url('${p.image}')"><span class="property-badge">${p.transaction==='sale'?'À vendre':'À louer'}</span><button class="favorite-btn ${isFavorite(p.id)?'active':''}" onclick="toggleFavorite('${p.id}')">${isFavorite(p.id)?'♥':'♡'}</button></div><div class="property-body"><a href="details.html?id=${encodeURIComponent(p.id)}"><h3 class="property-title">${escapeHtml(p.title)}</h3><p class="property-location">📍 ${escapeHtml(p.quartier||p.commune||p.city)}, ${escapeHtml(p.city)}</p><div class="property-price">${formatPrice(p.price,p.transaction)}</div><div class="property-meta"><span>🛏 ${p.bedrooms} ch.</span><span>♧ ${p.bathrooms} sdb.</span><span>▧ ${p.area||'—'} m²</span></div></a></div></article>`}
-function renderListings(a){const l=document.getElementById('property-list');if(!l)return;l.innerHTML=a.map(card).join('');document.getElementById('results-count').textContent=`${a.length} bien${a.length>1?'s':''}`;document.getElementById('empty-state')?.classList.toggle('hidden',a.length>0)}function renderCurrent(){const p=getProperties(),f=document.getElementById('featured-properties'),fav=document.getElementById('favorites-list');if(f)f.innerHTML=p.slice(0,3).map(card).join('');if(document.getElementById('property-list'))renderListings(p);if(fav){const ids=JSON.parse(localStorage.getItem('ndaku_favorites')||'[]'),a=p.filter(x=>ids.includes(x.id));fav.innerHTML=a.map(card).join('');document.getElementById('favorites-empty')?.classList.toggle('hidden',a.length>0)}renderDetail();renderDashboardItems()}
-function renderDetail(){const e=document.getElementById('property-detail');if(!e)return;const id=new URLSearchParams(location.search).get('id'),p=getProperties().find(x=>x.id===id);if(!p){e.innerHTML=`<div class="empty-state"><h3>Bien introuvable</h3><a class="btn btn-primary" href="acheter.html">Retour</a></div>`;return}e.innerHTML=`<div class="detail-gallery"><img src="${p.image}" alt="${escapeHtml(p.title)}"><img src="${p.image}" alt=""></div><div class="detail-main"><div><span class="eyebrow dark">${p.transaction==='sale'?'À VENDRE':'À LOUER'}</span><h1>${escapeHtml(p.title)}</h1><p class="property-location">📍 ${escapeHtml(p.quartier||'')} ${p.commune?', '+escapeHtml(p.commune):''}, ${escapeHtml(p.city)}</p><div class="detail-price">${formatPrice(p.price,p.transaction)}</div><div class="spec-grid"><div class="spec"><b>${p.bedrooms}</b><span>Chambres</span></div><div class="spec"><b>${p.bathrooms}</b><span>Salles de bain</span></div><div class="spec"><b>${p.area||'—'} m²</b><span>Surface</span></div><div class="spec"><b>${p.type}</b><span>Type</span></div></div><h2>Description</h2><p>${escapeHtml(p.description)}</p><div class="detail-actions"><button class="btn btn-primary" onclick="contactProperty('${p.id}')">Contacter</button><button class="btn btn-outline" onclick="toggleFavorite('${p.id}')">${isFavorite(p.id)?'♥ Retirer':'♡ Ajouter aux favoris'}</button></div></div><aside class="detail-card"><h3>Annonceur</h3><p>Contactez l'annonceur pour organiser une visite.</p><p><strong>${escapeHtml(p.phone)}</strong></p><a class="btn btn-primary btn-large" href="tel:${encodeURIComponent(p.phone)}">Appeler</a></aside></div>`}function contactProperty(id){const p=getProperties().find(x=>x.id===id);if(p)location.href=`https://wa.me/${p.phone.replace(/\D/g,'')}?text=${encodeURIComponent('Bonjour, je suis intéressé(e) par votre bien sur NDAKU : '+p.title)}`}function renderDashboardItems(){const e=document.getElementById('dashboard-list');if(!e)return;e.innerHTML=getProperties().slice(0,8).map(p=>`<div class="dashboard-item"><div><strong>${escapeHtml(p.title)}</strong><div class="property-location">${escapeHtml(p.city)} · ${formatPrice(p.price,p.transaction)}</div></div><a class="btn btn-outline btn-small" href="details.html?id=${p.id}">Voir</a></div>`).join('')}document.addEventListener('DOMContentLoaded',renderCurrent)
+/* ==========================================================================
+   properties.js
+   Toutes les fonctions pour lire / créer / modifier / supprimer des biens
+   dans le LocalStorage. C'est ici que se trouve la "logique métier".
+   ========================================================================== */
+
+/* Retourne la liste complète des biens */
+function getProperties() {
+  return JSON.parse(localStorage.getItem(NDAKU_KEYS.properties)) || [];
+}
+
+/* Sauvegarde la liste complète des biens */
+function saveProperties(properties) {
+  localStorage.setItem(NDAKU_KEYS.properties, JSON.stringify(properties));
+}
+
+/* Retourne un bien par son id */
+function getPropertyById(id) {
+  return getProperties().find((p) => p.id === Number(id));
+}
+
+/* Ajoute un nouveau bien (utilisé par publier.html) */
+function addProperty(property) {
+  const properties = getProperties();
+  const newId = properties.length
+    ? Math.max(...properties.map((p) => p.id)) + 1
+    : 1;
+  property.id = newId;
+  property.createdAt = new Date().toISOString().slice(0, 10);
+  property.status = "en attente"; // modération avant publication définitive
+  properties.unshift(property);
+  saveProperties(properties);
+  return property;
+}
+
+/* Met à jour un bien existant */
+function updateProperty(id, updates) {
+  const properties = getProperties();
+  const index = properties.findIndex((p) => p.id === Number(id));
+  if (index === -1) return null;
+  properties[index] = { ...properties[index], ...updates };
+  saveProperties(properties);
+  return properties[index];
+}
+
+/* Supprime un bien */
+function deleteProperty(id) {
+  const properties = getProperties().filter((p) => p.id !== Number(id));
+  saveProperties(properties);
+}
+
+/* Retourne les biens publiés par l'utilisateur actuellement connecté */
+function getMyProperties() {
+  const user = getCurrentUser();
+  if (!user) return [];
+  return getProperties().filter((p) => p.ownerEmail === user.email);
+}
+
+/* Formatage du prix avec séparateur de milliers */
+function formatPrice(price, transaction) {
+  const formatted = Number(price).toLocaleString("fr-FR");
+  return transaction === "location" ? `$${formatted} / mois` : `$${formatted}`;
+}
+
+/* Construit le HTML d'une carte de bien immobilier */
+function renderPropertyCard(property) {
+  const isFav = isFavorite(property.id);
+  const image =
+    property.images && property.images.length
+      ? property.images[0]
+      : "https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=800&q=80";
+  const badge = property.transaction === "vente" ? "À vendre" : "À louer";
+
+  return `
+    <article class="property-card" data-id="${property.id}">
+      <div class="property-card__image-wrap">
+        <img src="${image}" alt="${escapeHtml(property.title)}" loading="lazy" class="property-card__image">
+        <span class="property-card__badge">${badge}</span>
+        <button class="property-card__fav ${isFav ? "is-active" : ""}" data-fav-id="${property.id}" aria-label="Ajouter aux favoris" title="Ajouter aux favoris">
+          <svg viewBox="0 0 24 24" width="20" height="20"><path d="M12 21s-7.5-4.6-10-9.3C.4 8.1 2 4.5 5.6 4c2-.3 3.7.6 4.9 2.2C11.7 4.6 13.4 3.7 15.4 4c3.6.5 5.2 4.1 3.6 7.7C19.5 16.4 12 21 12 21z" fill="${isFav ? "currentColor" : "none"}" stroke="currentColor" stroke-width="1.6"/></svg>
+        </button>
+      </div>
+      <div class="property-card__body">
+        <p class="property-card__price">${formatPrice(property.price, property.transaction)}</p>
+        <h3 class="property-card__title"><a href="details.html?id=${property.id}">${escapeHtml(property.title)}</a></h3>
+        <p class="property-card__location">${escapeHtml(property.commune)}, ${escapeHtml(property.city)}</p>
+        <ul class="property-card__meta">
+          ${property.bedrooms ? `<li>${property.bedrooms} ch.</li>` : ""}
+          ${property.bathrooms ? `<li>${property.bathrooms} sdb</li>` : ""}
+          <li>${property.area} m²</li>
+        </ul>
+        <a href="details.html?id=${property.id}" class="btn btn--outline btn--small">Voir le bien</a>
+      </div>
+    </article>
+  `;
+}
+
+/* Petite sécurité anti-injection HTML pour les champs texte des annonces */
+function escapeHtml(str) {
+  if (!str) return "";
+  const div = document.createElement("div");
+  div.textContent = str;
+  return div.innerHTML;
+}
