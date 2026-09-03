@@ -1,1 +1,196 @@
-<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="NDAKU immobilier"><title>NDAKU — Trouvez. Visitez. Vivez.</title><link rel="stylesheet" href="css/style.css"></head><body><div id="header"></div><main><section class="hero"><div class="container"><b style="color:#e6bf67;letter-spacing:2px">NDAKU IMMOBILIER</b><h1>Trouvez.<br><span>Visitez.</span><br>Vivez.</h1><p>Maisons, appartements, terrains et opportunités immobilières dans une expérience simple et moderne.</p><div class="search"><form onsubmit="event.preventDefault();location.href='acheter.html'"><label>Type<select><option>Tous les biens</option><option>Maison</option><option>Appartement</option><option>Terrain</option></select></label><label>Localisation<input placeholder="Ville, commune, quartier"></label><label>Budget max<input type="number" placeholder="Prix"></label><button class="btn primary">Rechercher</button></form></div></div></section><section class="section"><div class="container"><h2>Explorez par catégorie</h2><div class="cats"><a class="card" href="acheter.html"><b>⌂</b><h3>Maisons</h3><p>Résidentielles</p></a><a class="card" href="acheter.html"><b>▦</b><h3>Appartements</h3><p>Studios & appartements</p></a><a class="card" href="acheter.html"><b>◇</b><h3>Terrains</h3><p>Construisez</p></a><a class="card" href="acheter.html"><b>▤</b><h3>Commerces</h3><p>Locaux pro</p></a><a class="card" href="projets-neufs.html"><b>✦</b><h3>Neuf</h3><p>Projets récents</p></a></div></div></section><section class="section muted"><div class="container"><h2>Les biens du moment</h2><div id="featured" class="grid"></div></div></section><section class="section"><div class="container banner"><h2>Vous êtes propriétaire ?</h2><p>Publiez votre bien et présentez-le aux personnes à la recherche d'un logement ou d'un investissement.</p><a class="btn" style="background:#e6bf67" href="publier.html">Publier une annonce</a></div></section></main><div id="footer"></div><script src="js/data.js"></script><script src="js/app.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NDAKU Immobilier — Trouvez. Visitez. Vivez.</title>
+<meta name="description" content="NDAKU est la plateforme immobilière qui vous aide à acheter, louer ou publier un bien : maisons, appartements, terrains, bureaux et projets neufs.">
+<meta property="og:title" content="NDAKU Immobilier">
+<meta property="og:description" content="Trouvez. Visitez. Vivez. La plateforme immobilière moderne.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+<header id="site-header"></header>
+
+<main>
+
+  <section class="hero">
+    <div class="container hero__content">
+      <p class="hero__kicker">Bienvenue sur NDAKU</p>
+      <h1>Trouvez. Visitez.<br><span>Vivez.</span></h1>
+      <p>La plateforme immobilière qui vous aide à trouver l'appartement, la maison ou le terrain parfait en toute simplicité, partout en RD Congo.</p>
+      <div class="hero__actions">
+        <a href="acheter.html" class="btn btn--gold">Explorer les biens</a>
+        <a href="publier.html" class="btn btn--ghost-light">Publier une annonce</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="container search-panel">
+    <div class="search-card">
+      <div class="search-tabs" role="tablist">
+        <button type="button" class="is-active" data-tab="vente">Acheter</button>
+        <button type="button" data-tab="location">Louer</button>
+        <button type="button" data-tab="neuf">Projets neufs</button>
+      </div>
+      <form class="search-form" id="home-search-form">
+        <input type="hidden" name="transaction" id="search-transaction" value="vente">
+        <div class="field">
+          <label for="search-type">Type de bien</label>
+          <select id="search-type" name="type">
+            <option value="">Tous les types</option>
+            <option value="Maison">Maison</option>
+            <option value="Appartement">Appartement</option>
+            <option value="Terrain">Terrain</option>
+            <option value="Bureau">Bureau</option>
+            <option value="Commerce">Commerce</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="search-city">Localisation</label>
+          <input type="text" id="search-city" name="city" placeholder="Ville, commune...">
+        </div>
+        <div class="field">
+          <label for="search-price-min">Prix minimum ($)</label>
+          <input type="number" id="search-price-min" name="priceMin" placeholder="0">
+        </div>
+        <div class="field">
+          <label for="search-price-max">Prix maximum ($)</label>
+          <input type="number" id="search-price-max" name="priceMax" placeholder="Aucun maximum">
+        </div>
+        <div class="field">
+          <button type="submit" class="btn btn--navy btn--block">Rechercher</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <section class="section">
+    <div class="container">
+      <div class="section__head">
+        <div>
+          <p class="section__eyebrow">Catégories</p>
+          <h2>Que recherchez-vous ?</h2>
+        </div>
+      </div>
+      <div class="categories-grid">
+        <a class="category-card" href="acheter.html?type=Maison">
+          <div class="category-card__icon">🏠</div>
+          <div class="category-card__label">Maisons</div>
+        </a>
+        <a class="category-card" href="acheter.html?type=Appartement">
+          <div class="category-card__icon">🏢</div>
+          <div class="category-card__label">Appartements</div>
+        </a>
+        <a class="category-card" href="acheter.html?type=Terrain">
+          <div class="category-card__icon">🌳</div>
+          <div class="category-card__label">Terrains</div>
+        </a>
+        <a class="category-card" href="acheter.html?type=Commerce">
+          <div class="category-card__icon">🏬</div>
+          <div class="category-card__label">Commerces</div>
+        </a>
+        <a class="category-card" href="acheter.html?type=Bureau">
+          <div class="category-card__icon">🏢</div>
+          <div class="category-card__label">Bureaux</div>
+        </a>
+        <a class="category-card" href="projets-neufs.html">
+          <div class="category-card__icon">🏗️</div>
+          <div class="category-card__label">Projets neufs</div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--gray">
+    <div class="container">
+      <div class="section__head">
+        <div>
+          <p class="section__eyebrow">Fraîchement ajoutés</p>
+          <h2>Biens récents</h2>
+        </div>
+        <a href="acheter.html" class="btn btn--outline btn--small">Voir tout</a>
+      </div>
+      <div class="properties-grid" id="recent-properties"></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section__head">
+        <div>
+          <p class="section__eyebrow">Sélection NDAKU</p>
+          <h2>Nos meilleures offres</h2>
+        </div>
+        <a href="acheter.html" class="btn btn--outline btn--small">Voir tout</a>
+      </div>
+      <div class="properties-grid" id="featured-properties"></div>
+    </div>
+  </section>
+
+  <section class="section section--navy">
+    <div class="container">
+      <div class="section__head" style="border:none;">
+        <div>
+          <p class="section__eyebrow">NDAKU en chiffres</p>
+          <h2>Une communauté qui grandit</h2>
+        </div>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-block"><div class="stat-block__number">250+</div><div class="stat-block__label">Biens publiés</div></div>
+        <div class="stat-block"><div class="stat-block__number">1 800+</div><div class="stat-block__label">Clients satisfaits</div></div>
+        <div class="stat-block"><div class="stat-block__number">50+</div><div class="stat-block__label">Partenaires</div></div>
+        <div class="stat-block"><div class="stat-block__number">10+</div><div class="stat-block__label">Villes couvertes</div></div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer id="site-footer"></footer>
+
+<script src="js/data.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/properties.js"></script>
+<script src="js/favorites.js"></script>
+<script src="js/search.js"></script>
+<script src="js/app.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    // Onglets du moteur de recherche
+    document.querySelectorAll(".search-tabs button").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".search-tabs button").forEach((b) => b.classList.remove("is-active"));
+        btn.classList.add("is-active");
+        const tab = btn.dataset.tab;
+        document.getElementById("search-transaction").value = tab === "location" ? "location" : "vente";
+      });
+    });
+
+    // Soumission -> redirige vers acheter/louer/projets-neufs avec les filtres en query string
+    document.getElementById("home-search-form").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const activeTab = document.querySelector(".search-tabs button.is-active").dataset.tab;
+      const filters = readFiltersFromForm(e.target);
+      const qs = buildQueryString(filters);
+      if (activeTab === "location") window.location.href = "louer.html?" + qs;
+      else if (activeTab === "neuf") window.location.href = "projets-neufs.html?" + qs;
+      else window.location.href = "acheter.html?" + qs;
+    });
+
+    // Biens récents et biens populaires
+    const all = getProperties().filter((p) => p.status === "actif");
+    const recent = sortProperties(all, "recent").slice(0, 3);
+    const featured = all.filter((p) => p.featured).slice(0, 3);
+
+    document.getElementById("recent-properties").innerHTML = recent.map(renderPropertyCard).join("");
+    document.getElementById("featured-properties").innerHTML = featured.map(renderPropertyCard).join("");
+  });
+</script>
+</body>
+</html>

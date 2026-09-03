@@ -1,1 +1,87 @@
-<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="NDAKU immobilier"><title>Dashboard — NDAKU</title><link rel="stylesheet" href="css/style.css"></head><body><div id="header"></div><main><section class="section"><div class="container"><h1>Tableau de bord</h1><div class="values"><div class="card"><small>Annonces</small><h2 id="pc">0</h2></div><div class="card"><small>Favoris</small><h2 id="fc">0</h2></div><div class="card"><small>Messages</small><h2>0</h2></div></div><div class="section"><div class="panel"><h2>Mes annonces</h2><div id="dash"></div></div></div></div></section></main><script>document.addEventListener('DOMContentLoaded',()=>{pc.textContent=props().length;fc.textContent=favs().length;dash.innerHTML=props().slice(0,8).map(p=>`<p><b>${p.title}</b> — ${money(p.price,p.t)} <a class="btn outline" href="details.html?id=${p.id}">Voir</a></p>`).join('')})</script><div id="footer"></div><script src="js/data.js"></script><script src="js/app.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tableau de bord — NDAKU Immobilier</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/dashboard.css">
+<link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+<header id="site-header"></header>
+
+<div class="dashboard-layout" id="dashboard-content">
+  <aside class="dashboard-sidebar">
+    <div class="dashboard-sidebar__user">
+      <div class="dashboard-sidebar__avatar" id="sidebar-initial">?</div>
+      <div>
+        <strong id="sidebar-name" style="color:#fff;">Utilisateur</strong>
+      </div>
+    </div>
+    <nav class="dashboard-nav">
+      <a href="dashboard.html" class="is-active">📊 Tableau de bord</a>
+      <a href="dashboard.html#mes-annonces">🏠 Mes annonces</a>
+      <a href="publier.html">➕ Publier une annonce</a>
+      <a href="favoris.html">❤️ Mes favoris</a>
+      <a href="#" onclick="showToast('La messagerie arrive bientôt'); return false;">✉️ Messages</a>
+      <a href="#" onclick="showToast('La gestion du profil arrive bientôt'); return false;">👤 Profil</a>
+      <button id="logout-btn">↩ Déconnexion</button>
+    </nav>
+  </aside>
+
+  <main class="dashboard-main">
+    <h1>Bonjour, <span id="welcome-name">👋</span></h1>
+    <p class="subtitle">Voici un aperçu de votre activité sur NDAKU.</p>
+
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-card__number" id="stat-total">0</div><div class="stat-card__label">Annonces publiées</div></div>
+      <div class="stat-card"><div class="stat-card__number" id="stat-active">0</div><div class="stat-card__label">Annonces actives</div></div>
+      <div class="stat-card"><div class="stat-card__number" id="stat-pending">0</div><div class="stat-card__label">En attente</div></div>
+      <div class="stat-card"><div class="stat-card__number" id="stat-favorites">0</div><div class="stat-card__label">Favoris</div></div>
+    </div>
+
+    <div class="dashboard-panel" id="mes-annonces">
+      <div class="dashboard-panel__head">
+        <h3 style="margin:0;">Mes annonces</h3>
+        <a href="publier.html" class="btn btn--gold btn--small">+ Nouvelle annonce</a>
+      </div>
+      <table class="listings-table">
+        <thead>
+          <tr>
+            <th>Annonce</th>
+            <th>Prix</th>
+            <th>Statut</th>
+            <th>Publiée le</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="my-listings"></tbody>
+      </table>
+    </div>
+  </main>
+</div>
+
+<footer id="site-footer"></footer>
+
+<script src="js/data.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/properties.js"></script>
+<script src="js/favorites.js"></script>
+<script src="js/search.js"></script>
+<script src="js/app.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const user = getCurrentUser();
+    if (user) {
+      document.getElementById("sidebar-name").textContent = user.name;
+      document.getElementById("sidebar-initial").textContent = user.name.charAt(0).toUpperCase();
+    }
+  });
+</script>
+<script src="js/dashboard.js"></script>
+</body>
+</html>

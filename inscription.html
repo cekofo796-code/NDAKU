@@ -1,1 +1,74 @@
-<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="NDAKU immobilier"><title>Inscription — NDAKU</title><link rel="stylesheet" href="css/style.css"></head><body><div id="header"></div><main><div class="auth form"><div class="logo">NDAKU<span>.</span></div><h1>Créer un compte</h1><label>Email<input type="email"></label><label>Mot de passe<input type="password"></label><button class="btn primary" onclick="toast('Compte créé')">Créer mon compte</button></div></main><div id="footer"></div><script src="js/data.js"></script><script src="js/app.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Créer un compte — NDAKU Immobilier</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+<header id="site-header"></header>
+
+<main>
+  <section class="section" style="padding-top:56px;">
+    <div class="container" style="max-width:440px;">
+      <h1 style="text-align:center;">Créer un compte</h1>
+      <p style="text-align:center; color:var(--text-soft); margin-bottom:32px;">Rejoignez NDAKU pour publier et gérer vos annonces.</p>
+
+      <form class="form-card" id="register-form">
+        <p class="form-error" id="register-error" hidden></p>
+        <div class="field" style="margin-bottom:18px;">
+          <label for="name">Nom complet</label>
+          <input type="text" id="name" name="name" required>
+        </div>
+        <div class="field" style="margin-bottom:18px;">
+          <label for="email">Adresse email</label>
+          <input type="email" id="email" name="email" required>
+        </div>
+        <div class="field" style="margin-bottom:18px;">
+          <label for="phone">Téléphone</label>
+          <input type="tel" id="phone" name="phone" placeholder="+243 8xx xxx xxx" required>
+        </div>
+        <div class="field" style="margin-bottom:24px;">
+          <label for="password">Mot de passe</label>
+          <input type="password" id="password" name="password" minlength="6" required>
+        </div>
+        <button type="submit" class="btn btn--gold btn--block">Créer mon compte</button>
+        <p class="form-footer-link">Déjà inscrit ? <a href="connexion.html" style="color:var(--gold); font-weight:600;">Se connecter</a></p>
+      </form>
+    </div>
+  </section>
+</main>
+
+<footer id="site-footer"></footer>
+
+<script src="js/data.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/properties.js"></script>
+<script src="js/favorites.js"></script>
+<script src="js/search.js"></script>
+<script src="js/app.js"></script>
+<script>
+  document.getElementById("register-form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const errorEl = document.getElementById("register-error");
+    const result = registerUser({
+      name: document.getElementById("name").value,
+      email: document.getElementById("email").value,
+      phone: document.getElementById("phone").value,
+      password: document.getElementById("password").value,
+    });
+    if (!result.success) {
+      errorEl.textContent = result.message;
+      errorEl.hidden = false;
+      return;
+    }
+    window.location.href = "dashboard.html";
+  });
+</script>
+</body>
+</html>

@@ -1,1 +1,97 @@
-<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="NDAKU immobilier"><title>Contact — NDAKU</title><link rel="stylesheet" href="css/style.css"></head><body><div id="header"></div><main><section class="page"><div class="container"><h1>Contact</h1><p>Parlons de votre projet immobilier.</p></div></section><section class="section"><div class="container"><form class="form" onsubmit="event.preventDefault();toast('Message enregistré. Merci !');this.reset()"><div class="two"><label>Nom<input required></label><label>Email<input type="email" required></label></div><label>Sujet<input required></label><label>Message<textarea rows="7" required></textarea></label><button class="btn primary">Envoyer</button></form></div></section></main><div id="footer"></div><script src="js/data.js"></script><script src="js/app.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact — NDAKU Immobilier</title>
+<meta name="description" content="Contactez l'équipe NDAKU pour toute question sur nos services immobiliers.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+<header id="site-header"></header>
+
+<main>
+  <div class="page-header">
+    <div class="container">
+      <h1>Contactez-nous</h1>
+      <p>Une question, un projet immobilier ? Notre équipe vous répond rapidement.</p>
+    </div>
+  </div>
+
+  <section class="section--tight">
+    <div class="container detail-layout">
+      <form class="form-card" id="contact-form">
+        <p class="form-error" id="contact-success" hidden style="background:#e4f5ea; color:#1f8248;"></p>
+        <div class="form-grid">
+          <div class="field">
+            <label for="c-name">Nom complet</label>
+            <input type="text" id="c-name" name="name" required>
+          </div>
+          <div class="field">
+            <label for="c-email">Email</label>
+            <input type="email" id="c-email" name="email" required>
+          </div>
+          <div class="field field--full">
+            <label for="c-subject">Sujet</label>
+            <input type="text" id="c-subject" name="subject" required>
+          </div>
+          <div class="field field--full">
+            <label for="c-message">Message</label>
+            <textarea id="c-message" name="message" rows="6" required></textarea>
+          </div>
+        </div>
+        <button type="submit" class="btn btn--gold" style="margin-top:20px;">Envoyer le message</button>
+      </form>
+
+      <aside class="contact-card">
+        <h3>Nos coordonnées</h3>
+        <p style="color:var(--text-soft); font-size:0.92rem;">📍 Avenue du Commerce, Gombe, Kinshasa, RD Congo</p>
+        <p style="color:var(--text-soft); font-size:0.92rem;">📞 +243 810 000 000</p>
+        <p style="color:var(--text-soft); font-size:0.92rem;">✉️ contact@ndaku.cd</p>
+        <a href="https://wa.me/243810000000" target="_blank" rel="noopener" class="btn btn--navy btn--block" style="margin-top:16px;">Discuter sur WhatsApp</a>
+        <div class="footer__social" style="margin-top:20px;">
+          <a href="#" aria-label="Facebook" style="border-color:var(--gray-100); color:var(--navy);">FB</a>
+          <a href="#" aria-label="Instagram" style="border-color:var(--gray-100); color:var(--navy);">IG</a>
+          <a href="#" aria-label="LinkedIn" style="border-color:var(--gray-100); color:var(--navy);">IN</a>
+        </div>
+      </aside>
+    </div>
+  </section>
+</main>
+
+<footer id="site-footer"></footer>
+
+<script src="js/data.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/properties.js"></script>
+<script src="js/favorites.js"></script>
+<script src="js/search.js"></script>
+<script src="js/app.js"></script>
+<script>
+  document.getElementById("contact-form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const messages = JSON.parse(localStorage.getItem(NDAKU_KEYS.messages)) || [];
+    const data = new FormData(e.target);
+    messages.push({
+      id: Date.now(),
+      name: data.get("name"),
+      email: data.get("email"),
+      subject: data.get("subject"),
+      message: data.get("message"),
+      date: new Date().toISOString(),
+    });
+    localStorage.setItem(NDAKU_KEYS.messages, JSON.stringify(messages));
+
+    const successEl = document.getElementById("contact-success");
+    successEl.textContent = "Votre message a bien été envoyé. Nous vous répondrons rapidement.";
+    successEl.hidden = false;
+    e.target.reset();
+    showToast("Message envoyé avec succès");
+  });
+</script>
+</body>
+</html>

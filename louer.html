@@ -1,1 +1,155 @@
-<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="NDAKU immobilier"><title>Louer — NDAKU</title><link rel="stylesheet" href="css/style.css"></head><body><div id="header"></div><main><section class="page"><div class="container"><h1>Biens à louer</h1><p>Logements et locaux disponibles.</p></div></section><section class="section"><div class="container"><div id="list" class="grid"></div></div></section></main><script>document.addEventListener('DOMContentLoaded',()=>document.getElementById('list').innerHTML=props().filter(x=>x.t==='rent').map(card).join(''))</script><div id="footer"></div><script src="js/data.js"></script><script src="js/app.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Louer un bien — NDAKU Immobilier</title>
+<meta name="description" content="Parcourez les maisons, appartements, studios, bureaux et commerces à louer sur NDAKU.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+<header id="site-header"></header>
+
+<main>
+  <div class="page-header">
+    <div class="container">
+      <h1>Biens à louer</h1>
+      <p>Maisons, appartements, studios, bureaux et commerces disponibles à la location partout en RD Congo.</p>
+    </div>
+  </div>
+
+  <section class="section--tight">
+    <div class="container">
+      <div class="listing-layout">
+
+        <aside class="filters-sidebar">
+          <h3>Affiner la recherche</h3>
+          <form id="filter-form">
+            <input type="hidden" name="transaction" value="location">
+            <div class="field">
+              <label for="f-keyword">Mot-clé</label>
+              <input type="text" id="f-keyword" name="keyword" placeholder="Ex : villa, studio...">
+            </div>
+            <div class="field">
+              <label for="f-type">Type de bien</label>
+              <select id="f-type" name="type">
+                <option value="">Tous les types</option>
+                <option value="Maison">Maison</option>
+                <option value="Appartement">Appartement</option>
+                <option value="Terrain">Terrain</option>
+                <option value="Bureau">Bureau</option>
+                <option value="Commerce">Commerce</option>
+                <option value="Projet neuf">Projet neuf</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="f-city">Ville</label>
+              <input type="text" id="f-city" name="city" placeholder="Ex : Kinshasa">
+            </div>
+            <div class="field">
+              <label for="f-commune">Commune</label>
+              <input type="text" id="f-commune" name="commune" placeholder="Ex : Gombe">
+            </div>
+            <div class="field">
+              <label for="f-price-min">Prix minimum ($)</label>
+              <input type="number" id="f-price-min" name="priceMin">
+            </div>
+            <div class="field">
+              <label for="f-price-max">Prix maximum ($)</label>
+              <input type="number" id="f-price-max" name="priceMax">
+            </div>
+            <div class="field">
+              <label for="f-bedrooms">Chambres min.</label>
+              <select id="f-bedrooms" name="bedrooms">
+                <option value="">Indifférent</option>
+                <option value="1">1+</option>
+                <option value="2">2+</option>
+                <option value="3">3+</option>
+                <option value="4">4+</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="f-bathrooms">Salles de bain min.</label>
+              <select id="f-bathrooms" name="bathrooms">
+                <option value="">Indifférent</option>
+                <option value="1">1+</option>
+                <option value="2">2+</option>
+                <option value="3">3+</option>
+              </select>
+            </div>
+            <button type="submit" class="btn btn--navy btn--block">Filtrer</button>
+            <button type="button" id="reset-filters" class="btn btn--outline btn--block" style="margin-top:10px;">Réinitialiser</button>
+          </form>
+        </aside>
+
+        <div>
+          <div class="filters-bar">
+            <p class="results-count" id="results-count"></p>
+            <select class="sort-select" id="sort-select">
+              <option value="recent">Plus récent</option>
+              <option value="popular">Plus populaire</option>
+              <option value="price-asc">Prix croissant</option>
+              <option value="price-desc">Prix décroissant</option>
+            </select>
+          </div>
+          <div class="properties-grid" id="results-grid"></div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer id="site-footer"></footer>
+
+<script src="js/data.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/properties.js"></script>
+<script src="js/favorites.js"></script>
+<script src="js/search.js"></script>
+<script src="js/app.js"></script>
+<script>
+  function runListingPage(fixedTransaction) {
+    const form = document.getElementById("filter-form");
+    const grid = document.getElementById("results-grid");
+    const countEl = document.getElementById("results-count");
+    const sortSelect = document.getElementById("sort-select");
+
+    function populateFormFromURL() {
+      const urlFilters = readFiltersFromURL();
+      Object.entries(urlFilters).forEach(([key, value]) => {
+        const input = form.elements[key];
+        if (input && key !== "transaction") input.value = value;
+      });
+    }
+
+    function render() {
+      const filters = readFiltersFromForm(form);
+      if (fixedTransaction) filters.transaction = fixedTransaction;
+      const all = getProperties().filter((p) => p.status === "actif");
+      let results = filterProperties(all, filters);
+      results = sortProperties(results, sortSelect.value);
+
+      countEl.textContent = `${results.length} bien${results.length > 1 ? "s" : ""} trouvé${results.length > 1 ? "s" : ""}`;
+      grid.innerHTML = results.length ? results.map(renderPropertyCard).join("") : renderEmptyState();
+    }
+
+    populateFormFromURL();
+    form.addEventListener("submit", (e) => { e.preventDefault(); render(); });
+    sortSelect.addEventListener("change", render);
+    document.getElementById("reset-filters").addEventListener("click", () => {
+      form.reset();
+      render();
+    });
+
+    render();
+  }
+
+  document.addEventListener("DOMContentLoaded", () => runListingPage("location"));
+</script>
+</body>
+</html>

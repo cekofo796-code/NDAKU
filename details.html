@@ -1,1 +1,159 @@
-<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="NDAKU immobilier"><title>Détail du bien — NDAKU</title><link rel="stylesheet" href="css/style.css"></head><body><div id="header"></div><main><section class="section"><div class="container"><div id="detail" class="detail"></div></div></section></main><div id="footer"></div><script src="js/data.js"></script><script src="js/app.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="page-title">Détail du bien — NDAKU Immobilier</title>
+<meta name="description" content="Consultez les détails de ce bien immobilier sur NDAKU : photos, prix, caractéristiques et contact de l'annonceur.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+<header id="site-header"></header>
+
+<main>
+  <div class="section--tight">
+    <div class="container">
+      <p class="breadcrumb"><a href="index.html">Accueil</a> / <a href="acheter.html">Biens</a> / <span id="breadcrumb-title">Détail</span></p>
+
+      <div id="loading" class="loader"></div>
+      <div id="not-found" class="empty-state" hidden>
+        <p>Ce bien est introuvable ou a été retiré.</p>
+        <a href="acheter.html" class="btn btn--navy btn--small">Retour aux biens</a>
+      </div>
+
+      <div id="detail-content" hidden>
+        <div class="gallery-main"><img id="gallery-main-img" src="" alt=""></div>
+        <div class="gallery-thumbs" id="gallery-thumbs"></div>
+
+        <div class="detail-layout" style="margin-top:32px;">
+          <div>
+            <div class="detail-header">
+              <div>
+                <span class="property-card__badge" id="detail-badge" style="position:static; display:inline-block; margin-bottom:10px;"></span>
+                <h1 id="detail-title"></h1>
+                <p class="detail-location" id="detail-location"></p>
+              </div>
+              <div style="text-align:right;">
+                <p class="detail-price" id="detail-price"></p>
+                <button class="btn btn--outline btn--small" data-fav-id="" id="detail-fav-btn">♡ Favoris</button>
+              </div>
+            </div>
+
+            <div class="detail-meta" id="detail-meta"></div>
+
+            <h3>Description</h3>
+            <p id="detail-description"></p>
+
+            <h3 style="margin-top:24px;">Caractéristiques</h3>
+            <ul class="feature-list" id="detail-features"></ul>
+
+            <h3 style="margin-top:40px;">Biens similaires</h3>
+            <div class="properties-grid" id="similar-properties" style="margin-top:16px;"></div>
+          </div>
+
+          <aside class="contact-card">
+            <div class="contact-card__owner">
+              <div class="contact-card__avatar" id="owner-initial"></div>
+              <div>
+                <strong id="owner-name"></strong>
+                <p style="margin:0; font-size:0.85rem; color:var(--text-soft);">Annonceur</p>
+              </div>
+            </div>
+            <a href="#" class="btn btn--gold" id="whatsapp-btn" target="_blank" rel="noopener">Contacter sur WhatsApp</a>
+            <a href="#" class="btn btn--navy" id="call-btn">Appeler l'annonceur</a>
+            <p class="disclaimer">Ne communiquez jamais d'argent avant d'avoir visité le bien en personne. Méfiez-vous des offres trop belles pour être vraies.</p>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer id="site-footer"></footer>
+
+<script src="js/data.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/properties.js"></script>
+<script src="js/favorites.js"></script>
+<script src="js/search.js"></script>
+<script src="js/app.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const id = new URLSearchParams(window.location.search).get("id");
+    const property = getPropertyById(id);
+    const loading = document.getElementById("loading");
+    const notFound = document.getElementById("not-found");
+    const content = document.getElementById("detail-content");
+
+    loading.style.display = "none";
+
+    if (!property) {
+      notFound.hidden = false;
+      return;
+    }
+    content.hidden = false;
+
+    document.getElementById("page-title").textContent = `${property.title} — NDAKU Immobilier`;
+    document.getElementById("breadcrumb-title").textContent = property.title;
+    document.getElementById("detail-title").textContent = property.title;
+    document.getElementById("detail-location").textContent = `${property.commune}, ${property.city}`;
+    document.getElementById("detail-price").textContent = formatPrice(property.price, property.transaction);
+    document.getElementById("detail-badge").textContent = property.transaction === "vente" ? "À vendre" : "À louer";
+    document.getElementById("detail-badge").style.background = "var(--navy)";
+    document.getElementById("detail-badge").style.color = "#fff";
+    document.getElementById("detail-badge").style.padding = "6px 14px";
+    document.getElementById("detail-badge").style.borderRadius = "100px";
+    document.getElementById("detail-badge").style.fontSize = "0.75rem";
+    document.getElementById("detail-description").textContent = property.description;
+
+    const favBtn = document.getElementById("detail-fav-btn");
+    favBtn.setAttribute("data-fav-id", property.id);
+    const setFavLabel = () => favBtn.textContent = isFavorite(property.id) ? "♥ Dans vos favoris" : "♡ Ajouter aux favoris";
+    setFavLabel();
+    favBtn.addEventListener("click", () => setTimeout(setFavLabel, 0));
+
+    const images = property.images && property.images.length ? property.images : ["https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1200&q=80"];
+    document.getElementById("gallery-main-img").src = images[0];
+    document.getElementById("gallery-thumbs").innerHTML = images.map((img, i) =>
+      `<img src="${img}" class="${i === 0 ? "is-active" : ""}" data-index="${i}">`
+    ).join("");
+    document.querySelectorAll(".gallery-thumbs img").forEach((thumb) => {
+      thumb.addEventListener("click", () => {
+        document.getElementById("gallery-main-img").src = images[thumb.dataset.index];
+        document.querySelectorAll(".gallery-thumbs img").forEach((t) => t.classList.remove("is-active"));
+        thumb.classList.add("is-active");
+      });
+    });
+
+    const metaItems = [
+      property.bedrooms ? { label: "Chambres", value: property.bedrooms } : null,
+      property.bathrooms ? { label: "Salles de bain", value: property.bathrooms } : null,
+      { label: "Superficie", value: property.area + " m²" },
+      { label: "Type", value: property.type },
+    ].filter(Boolean);
+    document.getElementById("detail-meta").innerHTML = metaItems.map(m =>
+      `<div class="detail-meta__item"><strong>${m.value}</strong><span>${m.label}</span></div>`
+    ).join("");
+
+    document.getElementById("detail-features").innerHTML = (property.features || []).map(f => `<li>${escapeHtml(f)}</li>`).join("") || "<li>Aucune caractéristique renseignée</li>";
+
+    document.getElementById("owner-name").textContent = property.owner;
+    document.getElementById("owner-initial").textContent = property.owner.charAt(0).toUpperCase();
+    document.getElementById("call-btn").href = `tel:${property.phone}`;
+    document.getElementById("whatsapp-btn").href = `https://wa.me/${property.phone.replace(/[^0-9]/g, "")}?text=${encodeURIComponent("Bonjour, je suis intéressé(e) par votre annonce sur NDAKU : " + property.title)}`;
+
+    // Biens similaires : même type, prix proche, en excluant le bien courant
+    const similar = getProperties()
+      .filter((p) => p.id !== property.id && p.status === "actif" && p.type === property.type)
+      .slice(0, 3);
+    document.getElementById("similar-properties").innerHTML = similar.length
+      ? similar.map(renderPropertyCard).join("")
+      : "<p style='color:var(--text-soft)'>Aucun bien similaire pour le moment.</p>";
+  });
+</script>
+</body>
+</html>
